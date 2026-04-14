@@ -113,42 +113,9 @@ homeagent/
 
 当前版本的数据主要来自抓包保存的房源 JSON 文件，仅用于自行学习使用。
 
-
----
-
-
-
 ```powershell
 $env:HOMEAGENT_LLM_MODEL="qwen-flash"
 $env:DASHSCOPE_API_KEY="your_api_key"
-```
-
----
-
-## 快速开始
-
-### 1. 构建房源索引
-
-```powershell
-python -m homeagent.infrastructure.indexing.build_listing_index
-```
-
-### 2. 查看项目状态
-
-```powershell
-python -m homeagent.interfaces.cli --status
-```
-
-### 3. 命令行查询示例
-
-```powershell
-python -m homeagent.interfaces.cli 朝阳区 两室一厅 预算7000 近地铁
-```
-
-### 4. 启动 Web 页面
-
-```powershell
-streamlit run homeagent/interfaces/web_app.py
 ```
 
 
@@ -162,30 +129,6 @@ streamlit run homeagent/interfaces/web_app.py
 - Web：`homeagent/interfaces/web_app.py`
 - 索引构建：`homeagent/infrastructure/indexing/build_listing_index.py`
 
----
-
-## 项目完成度
-
-如果以作品集、课程设计或智能体原型系统为标准，当前版本已经具备较高完成度，已覆盖：
-
-- 项目分层结构设计
-- LLM 工作流编排
-- 检索与推荐主链路
-- 向量检索
-- 多轮记忆
-- 页面交互
-- 地图展示
-- 收藏与对比
-- 语音输入
-
-若进一步朝生产级系统推进，后续仍可增强以下能力：
-
-- 接入更多真实房源数据
-- 接入 PDF 文档知识库
-- 接入真实经纬度
-- 使用数据库替代 JSON 持久化
-- 增加测试体系与部署方案
-- 增加多用户与权限管理
 
 ---
 
