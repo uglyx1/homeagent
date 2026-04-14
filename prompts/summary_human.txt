@@ -1,0 +1,8 @@
+用户问题：{query}
+结构化需求：{requirements}
+推荐房源：{recommendations}
+知识参考：{knowledge_hits}
+放宽说明：{relaxation_notes}
+
+请返回 JSON。
+

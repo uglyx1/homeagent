@@ -1,0 +1,7 @@
+用户问题：{query}
+用户画像：{memory_summary}
+最近对话：
+{recent_history}
+
+请返回结构化 JSON。
+
