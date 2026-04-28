@@ -6,7 +6,7 @@ import time
 import streamlit as st
 
 from homeagent.app.agent import HouseRentingAgentV2
-from homeagent.config import PROJECT_NAME
+from homeagent.config import PROJECT_NAME, PROJECT_SUBTITLE
 from homeagent.domain.models import RecommendationResult
 from homeagent.interfaces.web.results import render_results
 from homeagent.interfaces.web.state import reset_voice_widget
@@ -89,11 +89,21 @@ def render_header() -> None:
     has_history = bool(st.session_state.get("chat_history"))
     has_result = st.session_state.get("result") is not None
     if has_history or has_result:
+        result = st.session_state.get("result")
+        total = result.total_found if result else 0
+        compared = len(st.session_state.get("compare_ids", []))
         st.markdown(
             f"""
             <div class="mini-topbar">
-                <div class="mini-brand">{PROJECT_NAME}</div>
-                <div class="mini-subtitle">北京租房智能助手</div>
+                <div>
+                    <div class="mini-brand">{PROJECT_NAME}</div>
+                    <div class="mini-subtitle">{PROJECT_SUBTITLE}</div>
+                </div>
+                <div class="mini-status">
+                    <span>{total} 套候选</span>
+                    <span>{compared} 套对比</span>
+                    <span>北京</span>
+                </div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -103,13 +113,37 @@ def render_header() -> None:
     st.markdown(
         f"""
         <div class="hero-shell">
-            <div class="hero-kicker">{PROJECT_NAME} · Beijing Renting Agent</div>
-            <h1>像和 Kimi 聊天一样找房。</h1>
-            <p>直接说预算、区域、户型和通勤偏好。系统会把结构化筛选、知识检索和房源推荐收敛成一条清晰的对话流。</p>
-            <div class="hero-suggestions">
-                <span>朝阳区 两室一厅 预算7000 近地铁</span>
-                <span>海淀区 一居室 预算5000 精装</span>
-                <span>丰台区 可月付 通勤国贸</span>
+            <div class="hero-main">
+                <div>
+                    <div class="hero-kicker">{PROJECT_NAME} · Beijing Renting Agent</div>
+                    <h1>把租房筛选变成一张清楚的决策桌。</h1>
+                    <p>说出预算、区域、户型和通勤偏好，巢选会把候选房源、匹配理由、区域分布和下一步建议整理成连续的对话结果。</p>
+                    <div class="hero-chips">
+                        <span class="hero-chip">自然语言找房</span>
+                        <span class="hero-chip">结构化筛选</span>
+                        <span class="hero-chip">地图对比</span>
+                    </div>
+                </div>
+                <div class="hero-suggestions">
+                    <span>朝阳区 两室一厅 预算7000 近地铁</span>
+                    <span>海淀区 一居室 预算5000 精装</span>
+                    <span>丰台区 可月付 通勤国贸</span>
+                </div>
+            </div>
+            <div class="hero-rail">
+                <div class="hero-rail-title">今日工作台</div>
+                <div class="hero-rail-item">
+                    <div class="hero-rail-value">5</div>
+                    <div class="hero-rail-label">优先推荐位</div>
+                </div>
+                <div class="hero-rail-item">
+                    <div class="hero-rail-value">3</div>
+                    <div class="hero-rail-label">知识检索参考</div>
+                </div>
+                <div class="hero-rail-item">
+                    <div class="hero-rail-value">4</div>
+                    <div class="hero-rail-label">决策视图：推荐、地图、详情、对比</div>
+                </div>
             </div>
         </div>
         """,
@@ -158,7 +192,7 @@ def render_voice_input(agent: HouseRentingAgentV2) -> None:
 
 
 def render_empty_prompts(agent: HouseRentingAgentV2) -> None:
-    st.markdown('<div class="suggestion-title">试试这样问</div>', unsafe_allow_html=True)
+    st.markdown('<div class="suggestion-title">快捷需求</div>', unsafe_allow_html=True)
     prompt_cols = st.columns(3, gap="small")
     prompts = [
         "朝阳区 两室一厅 预算7000 近地铁",

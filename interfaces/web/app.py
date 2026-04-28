@@ -7,7 +7,7 @@ from homeagent.interfaces.web.constants import PAGE_TITLE
 from homeagent.interfaces.web.data import get_agent
 from homeagent.interfaces.web.sidebar import render_sidebar
 from homeagent.interfaces.web.state import ensure_state
-from homeagent.interfaces.web.styles import inject_styles
+from homeagent.interfaces.web.styles import inject_motion, inject_styles
 
 
 def main() -> None:
@@ -16,6 +16,7 @@ def main() -> None:
     bootstrap_agent = get_agent(st.session_state.get("user_id", "demo_user"))
     ensure_state(bootstrap_agent)
     inject_styles()
+    inject_motion()
 
     agent = get_agent(st.session_state.user_id)
     result = st.session_state.result

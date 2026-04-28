@@ -13,8 +13,15 @@ from homeagent.interfaces.web.state import clear_filters, compose_filter_query, 
 def render_sidebar(agent: HouseRentingAgentV2, result: RecommendationResult | None) -> None:
     options = get_filter_options()
     with st.sidebar:
-        st.markdown(f"### {PROJECT_NAME}")
-        st.caption("筛选器和辅助面板都收在这里，主页面只保留对话。")
+        st.markdown(
+            f"""
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-title">{PROJECT_NAME}</div>
+                <div class="sidebar-brand-subtitle">租房条件、状态和用户记忆都放在这里，主页面专注做推荐决策。</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
         user_id = st.text_input("用户 ID", value=st.session_state.user_id)
         if user_id != st.session_state.user_id:
@@ -60,13 +67,14 @@ def render_sidebar(agent: HouseRentingAgentV2, result: RecommendationResult | No
 
             st.caption("左侧筛选器是独立搜索入口，不会自动拼进聊天输入框。")
 
-        with st.expander("本轮状态", expanded=False):
+        with st.expander("本轮状态", expanded=True):
             total = result.total_found if result else 0
             hit_count = len(result.knowledge_hits) if result else 0
-            st.metric("候选房源", total)
-            st.metric("知识命中", hit_count)
-            st.metric("收藏房源", len(agent.get_favorite_listing_ids()))
-            st.metric("对比列表", len(st.session_state.compare_ids))
+            metric_left, metric_right = st.columns(2)
+            metric_left.metric("候选房源", total)
+            metric_right.metric("知识命中", hit_count)
+            metric_left.metric("收藏房源", len(agent.get_favorite_listing_ids()))
+            metric_right.metric("对比列表", len(st.session_state.compare_ids))
 
         with st.expander("系统状态", expanded=False):
             st.code(agent.get_status_summary(), language=None)
