@@ -12,12 +12,14 @@ if str(PROJECT_ROOT) not in sys.path:
 try:
     from homeagent.app.agent import HouseRentingAgentV2
     from homeagent.infrastructure.indexing.build_listing_index import main as rebuild_listing_index
+    from homeagent.evaluations.evaluate_agent import run_evaluation
     from homeagent.config import DEFAULT_USER_ID
 except ModuleNotFoundError:
     if str(PROJECT_ROOT) not in sys.path:
         sys.path.insert(0, str(PROJECT_ROOT))
     from homeagent.app.agent import HouseRentingAgentV2
     from homeagent.infrastructure.indexing.build_listing_index import main as rebuild_listing_index
+    from homeagent.evaluations.evaluate_agent import run_evaluation
     from homeagent.config import DEFAULT_USER_ID
 
 
@@ -28,6 +30,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--profile", action="store_true", help="查看当前用户画像")
     parser.add_argument("--status", action="store_true", help="查看项目状态")
     parser.add_argument("--rebuild-index", action="store_true", help="根据 raw_data 重建房源索引")
+    parser.add_argument("--evaluate", action="store_true", help="运行推荐质量评测集")
     parser.add_argument("--show", metavar="LISTING_ID", help="查看指定房源详情")
     parser.add_argument("--verbose", action="store_true", help="输出更详细的思考轨迹")
     return parser
@@ -58,6 +61,12 @@ def main() -> None:
 
     if args.rebuild_index:
         rebuild_listing_index()
+        return
+
+    if args.evaluate:
+        results = run_evaluation(user_id=args.user)
+        if not all(item.passed for item in results):
+            raise SystemExit(1)
         return
 
     agent = HouseRentingAgentV2(user_id=args.user)

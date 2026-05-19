@@ -234,9 +234,38 @@ def render_selected_detail(agent: HouseRentingAgentV2) -> None:
         st.warning("当前房源详情不可用。")
         return
     render_listing_image(listing, height=240)
+    report = agent.get_listing_decision_report(listing.listing_id)
+    if report is not None:
+        render_listing_decision_report(report)
     st.markdown('<div class="detail-panel">', unsafe_allow_html=True)
     st.code(agent.get_listing_detail_text(listing.listing_id), language=None)
     st.markdown("</div>", unsafe_allow_html=True)
+
+
+def render_bullet_panel(title: str, items: list[str], class_name: str = "") -> None:
+    safe_items = "".join(f"<li>{_safe(item)}</li>" for item in items)
+    st.markdown(
+        f"""
+        <div class="decision-panel {class_name}">
+            <div class="decision-panel-title">{_safe(title)}</div>
+            <ul>{safe_items}</ul>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_listing_decision_report(report) -> None:
+    cols = st.columns(2, gap="medium")
+    with cols[0]:
+        render_bullet_panel("推荐亮点", report.highlights, "positive")
+    with cols[1]:
+        render_bullet_panel("看房风险", report.risks, "warning")
+    cols = st.columns(2, gap="medium")
+    with cols[0]:
+        render_bullet_panel("适合人群", report.suitable_for)
+    with cols[1]:
+        render_bullet_panel("看房必问", report.viewing_questions)
 
 
 def render_compare_section(agent: HouseRentingAgentV2) -> None:
@@ -244,9 +273,30 @@ def render_compare_section(agent: HouseRentingAgentV2) -> None:
     if not compare_ids:
         st.markdown('<div class="saved-note">把你犹豫的房源加入对比，这里会自动生成横向对比表。</div>', unsafe_allow_html=True)
         return
+    render_compare_decision_report(agent, compare_ids)
     compare_rows = agent.get_compare_rows(compare_ids)
     if compare_rows:
         st.dataframe(compare_rows, use_container_width=True, hide_index=True)
+
+
+def render_compare_decision_report(agent: HouseRentingAgentV2, compare_ids: list[str]) -> None:
+    report = agent.get_compare_decision_report(compare_ids)
+    st.markdown(
+        f"""
+        <div class="compare-verdict">
+            <div class="result-summary-kicker">智能对比结论</div>
+            <div class="result-summary-title">{_safe(report.verdict)}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    cols = st.columns(3, gap="medium")
+    with cols[0]:
+        render_bullet_panel("胜出维度", report.winners, "positive")
+    with cols[1]:
+        render_bullet_panel("取舍提醒", report.tradeoffs, "warning")
+    with cols[2]:
+        render_bullet_panel("下一步", report.next_steps)
 
 
 def render_favorites_section(agent: HouseRentingAgentV2) -> None:

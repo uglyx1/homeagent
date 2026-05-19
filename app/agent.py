@@ -11,6 +11,7 @@ from homeagent.config import (
 from homeagent.app.tools import build_tool_registry
 from homeagent.domain.models import RecommendationResult, RentalListing, UserRequirements
 from homeagent.services.decision_engine import DecisionEngine
+from homeagent.services.decision_report import CompareDecisionReport, DecisionReportService, ListingDecisionReport
 from homeagent.services.memory_manager import MemoryManager
 from homeagent.services.recommender import Recommender
 from homeagent.services.requirement_analyzer import RequirementAnalyzer
@@ -25,6 +26,7 @@ class HouseRentingAgentV2:
         self.analyzer = RequirementAnalyzer()
         self.tools = build_tool_registry(self.memory)
         self.decision_engine = DecisionEngine()
+        self.decision_report = DecisionReportService()
         self.recommender = Recommender()
         self.react_agent = ReActAgent(memory=self.memory, tools=self.tools)
         self.langgraph_workflow = LangGraphRentalWorkflow(
@@ -117,11 +119,24 @@ class HouseRentingAgentV2:
             return f"没有找到房源 {listing_id}"
         return self.recommender.format_listing_detail(listing)
 
+    def get_listing_decision_report(self, listing_id: str) -> ListingDecisionReport | None:
+        listing = self.get_listing(listing_id)
+        if listing is None:
+            return None
+        return self.decision_report.build_listing_report(
+            listing,
+            requirements=self.memory.short_term.last_requirements,
+        )
+
     def get_compare_rows(self, listing_ids: list[str]) -> list[dict]:
         response = self.tools.execute("compare_houses", {"listing_ids": listing_ids})
         if not response.get("success", False):
             return []
         return response.get("result", [])
+
+    def get_compare_decision_report(self, listing_ids: list[str]) -> CompareDecisionReport:
+        listings = [listing for listing_id in listing_ids if (listing := self.get_listing(listing_id)) is not None]
+        return self.decision_report.build_compare_report(listings)
 
     def get_favorite_listing_ids(self) -> list[str]:
         profile = self.memory.long_term.get_profile(self.user_id)

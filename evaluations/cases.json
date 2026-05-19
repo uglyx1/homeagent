@@ -1,0 +1,34 @@
+[
+  {
+    "name": "朝阳两居近地铁",
+    "query": "朝阳区 两室一厅 预算7000 近地铁",
+    "min_recommendations": 3,
+    "expected_districts": ["朝阳区", "海淀区"],
+    "expected_room_types": ["2bedroom"],
+    "budget_max": 8000
+  },
+  {
+    "name": "海淀一居精装",
+    "query": "海淀区 一居室 预算6000 精装",
+    "min_recommendations": 2,
+    "expected_districts": ["海淀区", "西城区"],
+    "expected_room_types": ["1bedroom"],
+    "budget_max": 7000
+  },
+  {
+    "name": "石景山两居押一付一",
+    "query": "石景山区 两室一厅 预算5000 押一付一",
+    "min_recommendations": 2,
+    "expected_districts": ["石景山区"],
+    "expected_room_types": ["2bedroom"],
+    "budget_max": 5500
+  },
+  {
+    "name": "通州两居可月付",
+    "query": "通州区 两居室 预算6000 可月付",
+    "min_recommendations": 2,
+    "expected_districts": ["通州区", "朝阳区", "北京经济技术开发区"],
+    "expected_room_types": ["2bedroom"],
+    "budget_max": 7000
+  }
+]

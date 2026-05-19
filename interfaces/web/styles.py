@@ -740,10 +740,50 @@ def inject_styles() -> None:
         }
 
         .detail-panel,
-        .saved-note {
+        .saved-note,
+        .decision-panel,
+        .compare-verdict {
             padding: 1rem;
             margin: 0.75rem 0;
             box-shadow: var(--shadow-soft);
+        }
+
+        .decision-panel,
+        .compare-verdict {
+            border: 1px solid rgba(255, 255, 255, 0.68);
+            border-radius: 8px;
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.34)),
+                rgba(255, 255, 255, 0.44);
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+        }
+
+        .decision-panel.positive {
+            border-left: 3px solid var(--brand);
+        }
+
+        .decision-panel.warning {
+            border-left: 3px solid var(--accent);
+        }
+
+        .decision-panel-title {
+            color: var(--ink);
+            font-size: 0.96rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .decision-panel ul {
+            margin: 0;
+            padding-left: 1.05rem;
+            color: var(--muted-strong);
+            line-height: 1.72;
+            font-size: 0.92rem;
+        }
+
+        .decision-panel li + li {
+            margin-top: 0.3rem;
         }
 
         .favorite-line,
